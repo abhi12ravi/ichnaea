@@ -203,7 +203,7 @@ class TestInsert(CeleryTestCase):
         session = self.db_master_session
         bad_key = "ab1234567890"
         good_key = "cd1234567890"
-        black = WifiBlacklist(key=bad_key)
+        black = WifiBlacklist(key=bad_key.decode('hex'))
         session.add(black)
         session.flush()
         measure = dict(id=0, lat=10000000, lon=20000000)

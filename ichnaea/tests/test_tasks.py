@@ -229,7 +229,7 @@ class TestWifiLocationUpdate(CeleryTestCase):
             WifiMeasure(lat=-41000000, lon=40000000, key=k4),
             WifiMeasure(lat=-41600000, lon=40000000, key=k4),
             # an already blacklisted wifi
-            WifiBlacklist(key=k5),
+            WifiBlacklist(key=k5.decode('hex')),
             WifiMeasure(lat=50000000, lon=50000000, key=k5),
             WifiMeasure(lat=51000000, lon=50000000, key=k5),
             # a wifi with an old different record we ignore, position
@@ -247,7 +247,7 @@ class TestWifiLocationUpdate(CeleryTestCase):
         self.assertEqual(result.get(), (5, 3))
 
         black = session.query(WifiBlacklist).all()
-        self.assertEqual(set([b.key for b in black]), set([k2, k3, k4, k5]))
+        self.assertEqual(set([b.key.encode('hex') for b in black]), set([k2, k3, k4, k5]))
 
         measures = session.query(WifiMeasure).all()
         self.assertEqual(len(measures), 14)

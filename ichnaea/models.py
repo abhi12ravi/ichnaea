@@ -2,15 +2,18 @@ import datetime
 
 from sqlalchemy import (
     Column,
+    Date,
     DateTime,
     Index,
     SmallInteger,
     String,
     UniqueConstraint,
 )
-from sqlalchemy.dialects.mysql import INTEGER as Integer
-from sqlalchemy.dialects.mysql import BIGINT as BigInteger
-
+from sqlalchemy.dialects.mysql import (
+    BIGINT as BigInteger,
+    BINARY as Binary,
+    INTEGER as Integer,
+)
 from ichnaea.db import _Model
 
 
@@ -184,12 +187,12 @@ class WifiBlacklist(_Model):
     )
     id = Column(BigInteger(unsigned=True),
                 primary_key=True, autoincrement=True)
-    created = Column(DateTime)
-    key = Column(String(12))
+    created = Column(Date)
+    key = Column(Binary(6))
 
     def __init__(self, *args, **kw):
         if 'created' not in kw:
-            kw['created'] = datetime.datetime.utcnow()
+            kw['created'] = datetime.datetime.utcnow().date()
         super(WifiBlacklist, self).__init__(*args, **kw)
 
 

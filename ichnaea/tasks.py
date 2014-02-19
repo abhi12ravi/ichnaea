@@ -216,6 +216,8 @@ def cell_location_update(self, min_new=10, max_new=100, batch=10):
 
 
 def mark_moving_wifis(session, moving_keys):
+    moving_keys = set([k.decode('hex') for k in moving_keys])
+
     utcnow = datetime.utcnow()
     query = session.query(WifiBlacklist.key).filter(
         WifiBlacklist.key.in_(moving_keys))
@@ -229,6 +231,8 @@ def mark_moving_wifis(session, moving_keys):
             on_duplicate='created=created').values(
             key=key, created=utcnow)
         session.execute(stmt)
+
+    moving_keys = [k.encode('hex') for k in moving_keys]
     remove_wifi.delay(list(moving_keys))
 
 

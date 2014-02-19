@@ -390,9 +390,10 @@ def process_wifi_measures(session, entries, userid=None):
     utcnow = datetime.datetime.utcnow().replace(tzinfo=iso8601.UTC)
 
     # did we get measures for blacklisted wifis?
+    binary_keys = [w.decode('hex') for w in wifi_keys]
     blacked = session.query(WifiBlacklist.key).filter(
-        WifiBlacklist.key.in_(wifi_keys)).all()
-    blacked = set([b[0] for b in blacked])
+        WifiBlacklist.key.in_(binary_keys)).all()
+    blacked = set([b[0].encode('hex') for b in blacked])
 
     # process entries
     for entry in entries:

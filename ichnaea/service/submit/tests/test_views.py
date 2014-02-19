@@ -162,8 +162,10 @@ class TestSubmit(CeleryAppTestCase):
         tstr = encode_datetime(time)
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}], "time": tstr},
-                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "b"}]},
+                {"lat": 1.0, "lon": 2.0, "time": tstr,
+                 "wifi": [{"key": "aa"}]},
+                {"lat": 2.0, "lon": 3.0,
+                 "wifi": [{"key": "bb"}]},
             ]},
             status=204)
         session = self.db_master_session
@@ -173,11 +175,11 @@ class TestSubmit(CeleryAppTestCase):
         wifis = dict([(w.key, (w.created, w.time)) for w in result])
         today = datetime.utcnow().date()
 
-        self.assertEqual(wifis['a'][0].date(), today)
-        self.assertEqual(wifis['a'][1], tday)
+        self.assertEqual(wifis['aa'][0].date(), today)
+        self.assertEqual(wifis['aa'][1], tday)
 
-        self.assertEqual(wifis['b'][0].date(), today)
-        self.assertEqual(wifis['b'][1].date(), today)
+        self.assertEqual(wifis['bb'][0].date(), today)
+        self.assertEqual(wifis['bb'][1].date(), today)
 
     def test_time_short_format(self):
         app = self.app
@@ -186,7 +188,8 @@ class TestSubmit(CeleryAppTestCase):
         tstr = time.isoformat()
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}], "time": tstr},
+                {"lat": 1.0, "lon": 2.0, "time": tstr,
+                 "wifi": [{"key": "aa"}]},
             ]},
             status=204)
         session = self.db_master_session
@@ -204,7 +207,8 @@ class TestSubmit(CeleryAppTestCase):
         time = "2070-01-01T11:12:13.456Z"
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}], "time": time},
+                {"lat": 1.0, "lon": 2.0, "time": time,
+                 "wifi": [{"key": "aa"}]}
             ]},
             status=204)
         session = self.db_master_session
@@ -217,7 +221,8 @@ class TestSubmit(CeleryAppTestCase):
         time = "2011-01-01T11:12:13.456Z"
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}], "time": time},
+                {"lat": 1.0, "lon": 2.0, "time": time,
+                 "wifi": [{"key": "aa"}]},
             ]},
             status=204)
         session = self.db_master_session
@@ -243,10 +248,10 @@ class TestSubmit(CeleryAppTestCase):
         session.flush()
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}]},
-                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "b"}]},
-                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "c"}]},
-                {"lat": -2.0, "lon": 3.0, "wifi": [{"key": "c"}]},
+                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "aa"}]},
+                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "bb"}]},
+                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "cc"}]},
+                {"lat": -2.0, "lon": 3.0, "wifi": [{"key": "cc"}]},
             ]},
             status=204)
         # check fine grained stats
@@ -283,8 +288,8 @@ class TestSubmit(CeleryAppTestCase):
         nickname = 'World Tr\xc3\xa4veler'
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}]},
-                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "b"}]},
+                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "aa"}]},
+                {"lat": 2.0, "lon": 3.0, "wifi": [{"key": "bb"}]},
             ]},
             headers={'X-Nickname': nickname},
             status=204)
@@ -308,7 +313,7 @@ class TestSubmit(CeleryAppTestCase):
         app = self.app
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "a"}]},
+                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "aa"}]},
             ]},
             headers={'X-Nickname': "a"},
             status=204)
@@ -331,7 +336,7 @@ class TestSubmit(CeleryAppTestCase):
         session.commit()
         app.post_json(
             '/v1/submit', {"items": [
-                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "A"}]},
+                {"lat": 1.0, "lon": 2.0, "wifi": [{"key": "aa"}]},
             ]},
             headers={'X-Nickname': nickname},
             status=204)

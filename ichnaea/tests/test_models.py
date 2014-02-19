@@ -111,17 +111,17 @@ class TestWifiBlacklist(DBTestCase):
 
     def test_fields(self):
         key = "3680873e9b83"
-        wifi = self._make_one(key=key)
+        wifi = self._make_one(key=key.decode('hex'))
         session = self.db_master_session
         session.add(wifi)
         session.commit()
 
         result = session.query(wifi.__class__).first()
-        self.assertEqual(result.key, key)
-        self.assertTrue(isinstance(result.created, datetime.datetime))
+        self.assertEqual(result.key.encode('hex'), key)
+        self.assertTrue(isinstance(result.created, datetime.date))
 
     def test_unique_key(self):
-        key = "3680873e9b83"
+        key = "3680873e9b83".decode('hex')
         wifi1 = self._make_one(key=key)
         session = self.db_master_session
         session.add(wifi1)
